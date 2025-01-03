@@ -15,7 +15,7 @@ Log in to the Globus web app, go to the `Collections` page, and find the collect
 
 Run the globus-weblinks script passing in your endpoint ID. The script will prompt you for authorization. Once authorized, it will print out HTTPS links to all your files. Write the links to a file.
 ```
-./globus-weblinks <YOUR-ENDPOINT-ID> > weblinks
+./globus-weblinks YOUR-ENDPOINT-ID > weblinks
 ```
 
 # Download your files using wget
