@@ -4,7 +4,6 @@ import argparse
 from pathlib import Path, PurePath
 import json
 import requests
-import sys
 import globus_sdk
 from urllib.parse import urlparse
 
@@ -18,12 +17,9 @@ def get_transfer_token():
     client.oauth2_start_flow()
 
     authorize_url = client.oauth2_get_authorize_url()
-    print(f"Please go to this URL and login:\n\n{authorize_url}\n",
-          file=sys.stderr)
+    print(f"Please go to this URL and login:\n\n{authorize_url}\n")
 
-    print("Please enter the code you get after login here: ",
-          end="", file=sys.stderr)
-    auth_code = input().strip()
+    auth_code = input("Please enter the code you get after login here: ").strip()
     return (client.oauth2_exchange_code_for_tokens(auth_code)
             .by_resource_server["transfer.api.globus.org"]["access_token"])
 
