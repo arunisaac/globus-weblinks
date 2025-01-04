@@ -1,5 +1,11 @@
 This python script is a quick hack to download data from Globus via HTTPS and without having to set up any Globus-specific tools. This is convenient if you simply want to download data from a Globus collection, and don't wish to set up their complex proprietary tooling.
 
+# How it works
+
+We use [globus-sdk](https://pypi.org/project/globus-sdk/) to traverse the file tree in our Globus collection and obtain HTTPS links for them. Then, we download the files authenticating using cookies extracted from the Globus web app.
+
+Really, this is hacky abuse of the single file HTTPS download links that the Globus web app provides. Doing everything through globus-sdk would be preferable, but I haven't figured out how. And, it works for now.
+
 # Dependencies
 
 [globus-sdk](https://pypi.org/project/globus-sdk/) and requests are the only dependencies. The easiest way to obtain them is to use GNU Guix. You will need the [guix-bioinformatics channel](https://git.genenetwork.org/guix-bioinformatics/about/).
