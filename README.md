@@ -32,4 +32,6 @@ Now, all that remains is to download your files. Do it like so:
 ```
 ./globus-weblinks YOUR-ENDPOINT-ID cookies.json
 ```
+If the download is interrupted, you can re-run the command and only incomplete files will be downloaded again.
+
 Enjoy!

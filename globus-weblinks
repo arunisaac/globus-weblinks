@@ -31,12 +31,29 @@ def find_files(transfer_client, endpoint_id, path=PurePath("/")):
             yield path / file["name"]
 
 def download_file(url, cookies):
+    """Download URL.
+
+    Return True if it was actually downloaded, or return False if it
+    was skipped.
+    """
     filepath = Path(urlparse(url).path).relative_to("/")
-    filepath.parent.mkdir(parents=True, exist_ok=True)
-    with open(filepath, "wb") as f:
-        for chunk in (requests.get(url, cookies=cookies, stream=True)
-                      .iter_content(chunk_size=1024*1024)):
-            f.write(chunk)
+    url_size = int(requests.head(url, cookies=cookies).headers['content-length'])
+    # If local file is larger than remote, something is wrong.
+    if filepath.exists() and (filepath.stat().st_size > url_size):
+        raise Exception("Local file is larger than remote. "
+                        "Something is wrong, aborting. "
+                        "Maybe your autentication cookies are invalid?")
+    # If local file does not exist or is smaller than remote, proceed
+    # to download.
+    elif (not filepath.exists()) or (filepath.stat().st_size < url_size):
+        filepath.parent.mkdir(parents=True, exist_ok=True)
+        with open(filepath, "wb") as f:
+            for chunk in (requests.get(url, cookies=cookies, stream=True)
+                          .iter_content(chunk_size=1024*1024)):
+                f.write(chunk)
+        return True
+    else:
+        return False
 
 parser = argparse.ArgumentParser(description="Get web links for Globus collection")
 parser.add_argument("endpoint_id", metavar="endpoint-id", help="Endpoint ID of collection")
@@ -55,6 +72,8 @@ with open(args.cookies) as f:
     cookies = json.load(f)
 
 for i, url in enumerate(urls, 1):
-    print(f"{i}/{total}: Downloading {url}")
-    download_file(url, cookies)
+    if download_file(url, cookies):
+        print(f"{i}/{total}: Downloaded {url}")
+    else:
+        print(f"{i}/{total}: Skipped {url}")
 print("Download complete!")
